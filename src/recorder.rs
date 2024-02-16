@@ -1,6 +1,6 @@
 use std::sync::Arc;
 
-use metrics::{Counter, Gauge, Histogram, Key, KeyName, Recorder, SharedString, Unit};
+use metrics::{Counter, Gauge, Histogram, Key, KeyName, Metadata, Recorder, SharedString, Unit};
 use metrics_util::registry::{AtomicStorage, Registry};
 
 /// Metric recorder
@@ -27,16 +27,16 @@ impl Recorder for DataDogRecorder {
         unimplemented!()
     }
 
-    fn register_counter(&self, key: &Key) -> Counter {
+    fn register_counter(&self, key: &Key, _: &Metadata) -> Counter {
         self.registry
             .get_or_create_counter(key, |c| c.clone().into())
     }
 
-    fn register_gauge(&self, key: &Key) -> Gauge {
+    fn register_gauge(&self, key: &Key, _: &Metadata) -> Gauge {
         self.registry.get_or_create_gauge(key, |c| c.clone().into())
     }
 
-    fn register_histogram(&self, key: &Key) -> Histogram {
+    fn register_histogram(&self, key: &Key, _: &Metadata) -> Histogram {
         self.registry
             .get_or_create_histogram(key, |c| c.clone().into())
     }

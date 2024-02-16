@@ -30,9 +30,8 @@ pub struct DataDogBuilder {
     gzip: bool,
 }
 
-impl DataDogBuilder {
-    /// Creates a new [`DataDogBuilder`]
-    pub fn default() -> Self {
+impl Default for DataDogBuilder {
+    fn default() -> Self {
         DataDogBuilder {
             write_to_stdout: true,
             write_to_api: false,
@@ -43,7 +42,9 @@ impl DataDogBuilder {
             gzip: true,
         }
     }
+}
 
+impl DataDogBuilder {
     /// Write metrics to stdout in DataDog JSON format
     #[must_use]
     pub fn write_to_stdout(self, b: bool) -> DataDogBuilder {
@@ -95,15 +96,19 @@ impl DataDogBuilder {
     pub fn build(self) -> Result<DataDogHandle, Error> {
         let registry = Arc::new(Registry::new(AtomicStorage));
         let recorder = DataDogRecorder::new(registry.clone());
+
         let client = if self.write_to_api {
             let mut c = Client::builder();
+
             if let Some(timeout) = self.client_timeout {
                 c = c.timeout(timeout);
             }
+
             Some(c.build()?)
         } else {
             None
         };
+
         let config = DataDogConfig {
             write_to_stdout: self.write_to_stdout,
             write_to_api: self.write_to_api,

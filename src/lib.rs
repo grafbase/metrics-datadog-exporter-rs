@@ -48,8 +48,8 @@ pub struct DataDogHandle {
 
 impl DataDogHandle {
     /// Install [`DataDogRecorder`] and return [`DataDogExporter`]
-    pub fn install(self) -> Result<DataDogExporter, SetRecorderError> {
-        metrics::set_boxed_recorder(Box::new(self.recorder))?;
+    pub fn install(self) -> Result<DataDogExporter, SetRecorderError<DataDogRecorder>> {
+        metrics::set_global_recorder(self.recorder)?;
         Ok(self.handle)
     }
 
